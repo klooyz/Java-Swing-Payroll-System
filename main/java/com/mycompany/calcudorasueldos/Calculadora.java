@@ -66,7 +66,6 @@ public class Calculadora extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
@@ -128,13 +127,10 @@ public class Calculadora extends javax.swing.JFrame {
         jButton3.setText("Modificar");
         jButton3.addActionListener(this::jButton3ActionPerformed);
 
-        jButton4.setText("Agregar");
-        jButton4.addActionListener(this::jButton4ActionPerformed);
-
         jButton5.setText("Calcular");
         jButton5.addActionListener(this::jButton5ActionPerformed);
 
-        jButton6.setText("jButton6");
+        jButton6.setText("Limpiar");
         jButton6.addActionListener(this::jButton6ActionPerformed);
 
         jLabel10.setText("Total Salud");
@@ -230,8 +226,6 @@ public class Calculadora extends javax.swing.JFrame {
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton4)
-                        .addGap(18, 18, 18)
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton2)
@@ -284,7 +278,6 @@ public class Calculadora extends javax.swing.JFrame {
                             .addComponent(jButton1)
                             .addComponent(jButton2)
                             .addComponent(jButton3)
-                            .addComponent(jButton4)
                             .addComponent(jButton5)
                             .addComponent(jButton6)))
                     .addGroup(layout.createSequentialGroup()
@@ -309,7 +302,15 @@ public class Calculadora extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        
+        int filaSeleccionada = jTable1.getSelectedRow();
+        
+       
+        if (filaSeleccionada >= 0) {
+            modelo.removeRow(filaSeleccionada);
+        } else {
+            JOptionPane.showMessageDialog(this, "Seleccione una fila de la tabla para eliminar.");
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
     private int leerNumero(javax.swing.JTextField campo) {
         if (campo.getText().isEmpty()) {
@@ -320,14 +321,14 @@ public class Calculadora extends javax.swing.JFrame {
     }
     
     private double obtenerPorcentajeAFP(String afpSeleccionada) {
-        // Porcentajes ficticios dentro del rango 12% - 13% (Slide 32)
+
         switch (afpSeleccionada) {
             case "Habitat": return 0.12;
             case "Plan Vital": return 0.123;
             case "Modelo": return 0.125;
             case "Provida": return 0.128;
             case "Cuprum": return 0.13;
-            default: return 0.12; // Valor por defecto si no coincide
+            default: return 0.12; 
         }
     }
     
@@ -336,10 +337,8 @@ public class Calculadora extends javax.swing.JFrame {
         txtSueldoBase.setText("0"); 
         txtMovi.setText("0"); 
         txtCola.setText("0"); 
-
-        // Reiniciamos los ComboBox
-        Salud.setSelectedIndex(0); // Salud
-        AFP.setSelectedIndex(0); // AFP
+        Salud.setSelectedIndex(0); 
+        AFP.setSelectedIndex(0); 
         
     }
     
@@ -362,7 +361,7 @@ public class Calculadora extends javax.swing.JFrame {
             double totalHaberes = totalImponible + movilizacion + colacion;
 
             double descSalud = 0;
-            String seleccionSalud = Salud.getSelectedItem().toString(); // Leemos qué eligió
+            String seleccionSalud = Salud.getSelectedItem().toString(); 
             
             if (seleccionSalud.equalsIgnoreCase("Fonasa")) {
                 descSalud = totalImponible * 0.07; 
@@ -401,20 +400,67 @@ public class Calculadora extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
+
         limpiarCampos();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        int respuesta = JOptionPane.showConfirmDialog(this, "¿Seguro que desea borrar toda la tabla?", "Confirmar", JOptionPane.YES_NO_OPTION);
+        
+        if (respuesta == JOptionPane.YES_OPTION) {
+            modelo.setRowCount(0); 
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton4ActionPerformed
-
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+       int filaSeleccionada = jTable1.getSelectedRow();
+        
+        if (filaSeleccionada == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione una fila para editar.");
+            return;
+        }
+
+        // 2. REPETIR LA LÓGICA DE CÁLCULO (Para obtener los nuevos valores de las cajas)
+        try {
+            // -- Copia exacta de tu lógica de cálculo --
+            String nombre = txtNombre.getText();
+            int sueldoBase = Integer.parseInt(txtSueldoBase.getText());
+            int bono = (int) (sueldoBase * 0.10);
+            
+            // Asignaciones
+            int mov = leerNumero(txtMovi); // Asegúrate de tener el método leerNumero
+            int col = leerNumero(txtCola);
+            
+            double totalImponible = sueldoBase + bono;
+            double totalHaberes = totalImponible + mov + col;
+
+            // Descuentos
+            double descSalud = 0;
+            String salud = Salud.getSelectedItem().toString();
+            if (salud.equalsIgnoreCase("Fonasa")) {
+                descSalud = totalImponible * 0.07;
+            } else {
+                double porcIsapre = Double.parseDouble(jTextField5.getText());
+                descSalud = totalImponible * (porcIsapre / 100);
+            }
+            
+            String afp = AFP.getSelectedItem().toString();
+            double porcAFP = obtenerPorcentajeAFP(afp);
+            double descAFP = totalImponible * porcAFP;
+            
+            double totalDescuentos = descSalud + descAFP;
+            double totalPagar = totalHaberes - totalDescuentos;
+
+            modelo.setValueAt(nombre, filaSeleccionada, 0);
+            modelo.setValueAt(Math.round(totalHaberes), filaSeleccionada, 1);
+            modelo.setValueAt(Math.round(totalDescuentos), filaSeleccionada, 2);
+            modelo.setValueAt(Math.round(totalPagar), filaSeleccionada, 3);
+            
+            JOptionPane.showMessageDialog(this, "se a actualizado la fila correctamente.");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al editar: Verifique los datos.");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
@@ -448,7 +494,6 @@ public class Calculadora extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
