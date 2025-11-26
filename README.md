@@ -2,7 +2,7 @@
 
 A Java Swing GUI application developed for the Object-Oriented Programming (POO) laboratory. This tool calculates an employee's net pay (Sueldo Líquido) based on their base salary, allowances, and legal deductions in Chile.
 
-## 📋 Features
+## Features
 
 * **GUI:** User-friendly interface built with Java Swing.
 * **Automatic Calculations:**
